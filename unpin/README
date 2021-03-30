@@ -1,0 +1,10 @@
+to compile:
+make package
+
+to copy to phone:
+iproxy 2222 22
+scp -3 packages/com.leith.unpin_0.0.1-16+debug_iphoneos-arm.deb scp://root@localhost:2222//var/root/
+
+(password is "alpine")
+
+to change processes hooked edit unpin.plist

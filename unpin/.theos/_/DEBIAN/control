@@ -1,0 +1,10 @@
+Package: com.leith.unpin
+Name: unpin
+Architecture: iphoneos-arm
+Description: An awesome MobileSubstrate tweak!
+Maintainer: Doug Leith
+Author: Doug Leith
+Section: Tweaks
+Depends: mobilesubstrate (>= 0.9.5000)
+Version: 0.0.1-23+debug
+Installed-Size: 72
