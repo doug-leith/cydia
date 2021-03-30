@@ -56,8 +56,8 @@ To install a trusted (or system) CA cert on Android requires rooting the phone.
 3. Edit the shell scripts [cacert_setup.sh and cacert.sh to use the your cert filename (i.e. edit the `c8750f0d.0` entrie=s to match the output from the openssl command you used above).
 	
 3. Once you have your phone rooted, connect the phone to a laptop by usb cable and on the laptop type the following commands to copy files from your laptop to the phone:
-	* adb push cacert* /data/local/tmp/
-	* adb push c8750f0d.0 /data/local/tmp/
+	* `adb push cacert* /data/local/tmp/`
+	* `adb push c8750f0d.0 /data/local/tmp/`
 	
 4. Now open an adb shell by typing `adb shell`.
 
