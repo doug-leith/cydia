@@ -18,14 +18,14 @@
 
   * Download file [https://raw.githubusercontent.com/doug-leith/cydia/main/pf.conf](pf.conf) which contains these two lines:
 
->>`rdr on bridge100 inet proto tcp to any port {80,443} -> 127.0.0.1 port 8080`
->>`block drop quick on bridge100 inet proto udp to any port 443`
+>`rdr on bridge100 inet proto tcp to any port {80,443} -> 127.0.0.1 port 8080`
+>`block drop quick on bridge100 inet proto udp to any port 443`
 
   * Setup the firewall to redirect Wifi traffic to mitmdump using: `sudo pfctl -f pf.conf; sudo pfctl -e`
 
   * Edit file `/etc/sudoers` and add line:
 
->>`ALL ALL=NOPASSWD: /sbin/pfctl -s state`
+>`ALL ALL=NOPASSWD: /sbin/pfctl -s state`
 
   * Type `mitmproxy` to start up mitmproxy for the first time, then exit.  This will create folder `~/.mitmproxy` that contains the CA cert used by mitmproxy
 
@@ -63,8 +63,8 @@ Notes:
 to install libimobiledevice package.  See [https://libimobiledevice.org/](https://libimobiledevice.org/) for details
 2. Once libimobiledevice is installed, to ssh into phone over usb use:
 
->>`iproxy 2222 44 &``
->>`ssh root@localhost -p 2222`
+>`iproxy 2222 44 &``
+>`ssh root@localhost -p 2222`
 
 The password in "alpine".  To copy files off of phone use:
 
