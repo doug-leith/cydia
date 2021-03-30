@@ -18,8 +18,8 @@
 
   * Create file [https://raw.githubusercontent.com/doug-leith/cydia/main/pf.conf](pf.conf) with these two lines:
 
->rdr on bridge100 inet proto tcp to any port {80,443} -> 127.0.0.1 port 8080
->block drop quick on bridge100 inet proto udp to any port 443
+>>rdr on bridge100 inet proto tcp to any port {80,443} -> 127.0.0.1 port 8080
+>>block drop quick on bridge100 inet proto udp to any port 443
 
   * `sudo pfctl -f pf.conf; sudo pfctl -e`
 
