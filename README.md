@@ -9,15 +9,17 @@
 
 3. Setup macbook as wireless AP:
   * Connect macbook to one end of a wired ethernet cable (you'll need a usb-to-ethernet adapter for this) and connect other end of ethernet cable to an internet gateway e.g. your home router.   This will be used to connect the macbook to the internet.
-  * Open Settings, go to Sharing and click on "Internet Sharing".  In the "Share your connect from" drop down box select the wired ethernet connection.  In the "To computers using" box choose Wi-Fi.  Click start.  You should see the Wifi icon in the top bar of the macbook change to be grayed out.  Your macbook is now acting as a WiFi access point.  Devices connecting to it will have their traffic routed over the wired ethernet cable connected to the macbook.  The name of the Wifi network will be the same as the name of the macbook, on your phone open settings, look for the available Wifi networks and connect to the macbook.
+  * Open Settings, go to Sharing and click on "Internet Sharing".  
+  * In the "Share your connect from" drop down box select the wired ethernet connection.  
+  * In the "To computers using" box choose Wi-Fi.  
+  * Click start.  You should see the Wifi icon in the top bar of the macbook change to be grayed out.  Your macbook is now acting as a WiFi access point.  Devices connecting to it will have their traffic routed over the wired ethernet cable connected to the macbook.  The name of the Wifi network will be the same as the name of the macbook, on your phone open settings, look for the available Wifi networks and connect to the macbook.
 
 4. Follow instructions at https://docs.mitmproxy.org/stable/howto-transparent/ to setup transparent proxying.  In summary:
 
-  i. Create file [https://raw.githubusercontent.com/doug-leith/cydia/main/pf.conf](pf.conf) with these two lines:
+  * Create file [https://raw.githubusercontent.com/doug-leith/cydia/main/pf.conf](pf.conf) with these two lines:
 
-`rdr on bridge100 inet proto tcp to any port {80,443} -> 127.0.0.1 port 8080`
-
-`block drop quick on bridge100 inet proto udp to any port 443`
+>rdr on bridge100 inet proto tcp to any port {80,443} -> 127.0.0.1 port 8080
+>block drop quick on bridge100 inet proto udp to any port 443
 
   * `sudo pfctl -f pf.conf; sudo pfctl -e`
 
