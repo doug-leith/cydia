@@ -2,10 +2,10 @@
 
 ## Mitmproxy setup (for macbook):
 1. If not already installed, install Homebrew, see https://brew.sh/.   Use:
-  + `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+  * `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 2. Install mitmproxy, see https://mitmproxy.org/.  Use:
 
-`brew install mitmproxy`
+  * `brew install mitmproxy`
 
 3. Setup macbook as wireless AP:
   * Connect macbook to one end of a wired ethernet cable (you'll need a usb-to-ethernet adapter for this) and connect other end of ethernet cable to an internet gateway e.g. your home router.   This will be used to connect the macbook to the internet.
@@ -13,7 +13,7 @@
 
 4. Follow instructions at https://docs.mitmproxy.org/stable/howto-transparent/ to setup transparent proxying.  In summary:
 
-  * Create file [https://raw.githubusercontent.com/doug-leith/cydia/main/pf.conf](pf.conf) with these two lines:
+  i. Create file [https://raw.githubusercontent.com/doug-leith/cydia/main/pf.conf](pf.conf) with these two lines:
 
 `rdr on bridge100 inet proto tcp to any port {80,443} -> 127.0.0.1 port 8080`
 
