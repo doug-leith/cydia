@@ -14,7 +14,7 @@
   * In the "To computers using" box choose Wi-Fi.  
   * Click start.  You should see the Wifi icon in the top bar of the macbook change to be grayed out.  Your macbook is now acting as a WiFi access point.  Devices connecting to it will have their traffic routed over the wired ethernet cable connected to the macbook.  The name of the Wifi network will be the same as the name of the macbook, on your phone open settings, look for the available Wifi networks and connect to the macbook.
 
-4. Follow instructions at https://docs.mitmproxy.org/stable/howto-transparent/ to setup transparent proxying.  In summary:
+4. Setup transparent proxying using mitmproxy, see [ https://docs.mitmproxy.org/stable/howto-transparent/]( https://docs.mitmproxy.org/stable/howto-transparent/) for details.  In summary:
 
   * Download file [https://raw.githubusercontent.com/doug-leith/cydia/main/pf.conf](pf.conf) which contains these two lines:
 
@@ -31,10 +31,10 @@
 
   * Update the permissions using `chmod a+r ~/.mitmproxy/mitmproxy-ca.pem`
 
-  * Now type `sudo -u nobody mitmdump --mode transparent --showhost --ssl-insecure` top startup mitmproxy.  Traffic from the phone will now be routed to mitmproxy.  Typically you'll see errors as the phone detects the presence of mitmproxy intercepting connections.
+  * Now type `sudo -u nobody mitmdump --mode transparent --showhost --ssl-insecure` to startup mitmproxy.  Traffic from the phone will now be routed to mitmproxy.  Typically you'll see errors as the phone detects the presence of mitmproxy intercepting connections.
 
 ## Install mitmproxy CA cert as trusted on phone
-The next step is to install the CA cert of mitmproxy as a trusted cert on the phone.  To do this on an iphone:
+The next step is to install the CA cert of mitmproxy as a trusted cert on the phone.  To do this on an iPhone:
 1. Go to Settings-WiFi and connect to laptop access point
 2. Open Safari and navigate to url [http://mitm.it](http://mitm.it) (note, http not https).  Click "Get mitmproxy-ca-cert.pem" for iOS.  You'll see a message asking "This website is trying to download a configuration profile.  Do you want to allow this?", choose "Allow".
 3. Go to Settings-General-Profile, you should see mitmproxy, click on it and choose "install".
@@ -42,25 +42,25 @@ The next step is to install the CA cert of mitmproxy as a trusted cert on the ph
 5. As a test, go back to Safari and navigate to [https://leith.ie/nothingtosee.html](https://leith.ie/nothingtosee.html).  You should see connections being logged by mitmdump on the laptop as you type the URL, and then the actual connection to leith.ie/nothingtosee.html.  You may still see a few connections reporting errors, but mostly the connections should be accepted now - the connections that fail are being made by system processes, not Safari, and we need to use Cydia Substrate to make them work with mitmdump.
 
 ## iPhone Cydia Substrate setup:
-To bypass SSL cert checks made by system processes its necessary to jailbreak the phone.
-1. Download Checkra1n from [https://checkra.in/](https://checkra.in/), install and follow instructions to jailbreak iphone.
+To bypass SSL cert checks made by iPhone system processes its necessary to jailbreak the phone.
+1. Download Checkra1n from [https://checkra.in/](https://checkra.in/), install and follow instructions to jailbreak iPhone.
 2. Once phone has rebooted, connect phone to a Wifi network (a normal network, not the mitmproxy one), open checkra1n app and choose option to install Cydia.  A Cydia app icon will appear on the iphone desktop.
 3. Now click on the Cydia icon to open the Cydia app and:
-(i) Install Cydia substrate: on tabs at bottom of screen click "search", then search for "substrate".  You should find "Substrate Safe Mode", install this and click Respring button.
+(i) Install Cydia substrate: on tabs at bottom of screen click "search", then search for "substrate".  You should find "Substrate Safe Mode", install this and click `Respring` button.
 (ii) Optional: install frida, see [https://frida.re/docs/ios/](https://frida.re/docs/ios/)
-4. Install ssl unpinning script:
+4. Install custom ssl unpinning package:
   * Open Cydia app.
   * Click on "sources" tab at bottom, then click "Edit" and "Add".  Enter [https://doug-leith.github.io/cydia/](https://doug-leith.github.io/cydia/) as new source.
   * Click on new source, the on "Tweaks" and install the "unpin" package.  Note: source code for unpin package is at [https://github.com/doug-leith/cydia](https://github.com/doug-leith/cydia)
-  * We need to restart all of the system processes in order to activate the unpin package.  To do that, with phone connected by usb cable to macbook, run Checkra1n   
-  * Change the phone to connect to the mitmproxy access point.  You should now see all connections being successfully decoded by mitmproxy (you may see some warning messages warning about self-signed certs (these are Apple certs) but the `--ssl-insecure` option to mitmdump allows these to pass).
+  * We need to restart all of the system processes in order to activate the unpin package.  To do that, with phone connected by usb cable to macbook, run Checkra1n again.   
+  * Once the phone has rebooted, change the settings to connect to the mitmproxy access point.  You should now see all connections being successfully decoded by mitmproxy (you may see some warning messages warning about self-signed certs (these are Apple certs) but the `--ssl-insecure` option to mitmdump allows these to pass).
 
 Notes:
-1. With phone jailbroken using Checkra1n, to access iphone from command line over usb use:
+1. With phone jailbroken using Checkra1n, to access the iPhone from the command line over usb use:
 
   * `brew install libimobiledevice`
 
-to install libimobiledevice package.  See [https://libimobiledevice.org/](https://libimobiledevice.org/) for details
+to install libimobiledevice package.  See [https://libimobiledevice.org/](https://libimobiledevice.org/) for details.
 2. Once libimobiledevice is installed, to ssh into phone over usb use:
 
 >`iproxy 2222 44 &``
