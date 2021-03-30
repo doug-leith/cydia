@@ -53,7 +53,7 @@ To install a trusted (or system) CA cert on Android requires rooting the phone.
 	* cp mitmproxy-ca-cert.cer c8750f0d.0
 	* (See [https://docs.mitmproxy.org/stable/howto-install-system-trusted-ca-android/](https://docs.mitmproxy.org/stable/howto-install-system-trusted-ca-android/) for mitmproxy docs on this).
 
-3. Edit the shell scripts [cacert_setup.sh and cacert.sh to use the your cert filename (i.e. edit the `c8750f0d.0` entries to match the output from the openssl command you used above).
+3. Edit the shell scripts [cacert_setup.sh](cacert_setup.sh) and [cacert.sh](cacert.sh) to use the your cert filename (i.e. edit the `c8750f0d.0` entries to match the output from the openssl command you used above).
 	
 3. Once you have your phone rooted, connect the phone to a laptop by usb cable and on the laptop type the following commands to copy files from your laptop to the phone:
 	* `adb push cacert* /data/local/tmp/`
