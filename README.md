@@ -16,16 +16,16 @@
 
 4. Follow instructions at https://docs.mitmproxy.org/stable/howto-transparent/ to setup transparent proxying.  In summary:
 
-  * Create file [https://raw.githubusercontent.com/doug-leith/cydia/main/pf.conf](pf.conf) with these two lines:
+  * Download file [https://raw.githubusercontent.com/doug-leith/cydia/main/pf.conf](pf.conf) which contains these two lines:
 
 >>rdr on bridge100 inet proto tcp to any port {80,443} -> 127.0.0.1 port 8080
 >>block drop quick on bridge100 inet proto udp to any port 443
 
-  * `sudo pfctl -f pf.conf; sudo pfctl -e`
+  * Setup the firewall to redirect Wifi traffic to mitmdump using: `sudo pfctl -f pf.conf; sudo pfctl -e`
 
   * Edit file `/etc/sudoers` and add line:
 
-`ALL ALL=NOPASSWD: /sbin/pfctl -s state`
+>>`ALL ALL=NOPASSWD: /sbin/pfctl -s state`
 
   * Type `mitmproxy` to start up mitmproxy for the first time, then exit.  This will create folder `~/.mitmproxy` that contains the CA cert used by mitmproxy
 
