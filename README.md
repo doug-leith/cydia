@@ -1,4 +1,6 @@
-Mitmproxy setup (for macbook):
+## Inspecting Phone Network Connections
+
+#Mitmproxy setup (for macbook):
 1. If not already installed, install Homebrew, see https://brew.sh/.   Use:
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 2. Install mitmproxy, see https://mitmproxy.org/.  Use:
@@ -19,7 +21,7 @@ ALL ALL=NOPASSWD: /sbin/pfctl -s state
 sudo -u nobody mitmdump --mode transparent --showhost --ssl-insecure
 Traffic from the phone will now be routed to mitmproxy.  Typically you'll see errors as the phone detects the presence of mitmproxy intercepting connections.
 
-Install mitmproxy CA cert as trusted on phone
+#Install mitmproxy CA cert as trusted on phone
 The next step is to install the CA cert of mitmproxy as a trusted cert on the phone.  To do this on an iphone:
 (a) Go to Settings-WiFi and connect to laptop access point
 (b) Open Safari and navigate to url http://mitm.it (note, http not https).  Click "Get mitmproxy-ca-cert.pem" for iOS.  You'll see a message asking "This website is trying to download a configuration profile.  Do you want to allow this?", choose "Allow".
@@ -27,7 +29,7 @@ The next step is to install the CA cert of mitmproxy as a trusted cert on the ph
 (d) Go to Settings-General-About and at bottom of page choose "Certificate Trust Settings".  You should see mitmproxy, click the toggle to enable full trust
 (e) As a test, go back to Safari and navigate to https://leith.ie/nothingtosee.html.  You should see connections being logged by mitmdump on the laptop as you type the URL, and then the actual connection to leith.ie/nothingtosee.html.  You may still see a few connections reporting errors, but mostly the connections should be accepted now - the connections that fail are being made by system processes, not Safari, and we need to use Cydia Substrate to make them work with mitmdump.
 
-iPhone Cydia Substrate setup:
+#iPhone Cydia Substrate setup:
 1. Download Checkra1n from https://checkra.in/, install and follow instructions to jailbreak iphone.
 2. Once phone has rebooted, connect phone to a Wifi network (a normal network, not the mitmproxy one), open checkra1n app and choose option to install Cydia.  A Cydia app icon will appear on the iphone desktop.
 3. Now click on the Cydia icon to open the Cydia app and:
