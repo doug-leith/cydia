@@ -92,6 +92,7 @@ to install libimobiledevice package.  See [https://libimobiledevice.org/](https:
 2. Once libimobiledevice is installed, to ssh into phone over usb use:
 
 >`iproxy 2222 44 &`
+
 >`ssh root@localhost -p 2222`
 
 The password in "alpine".  To copy files off of phone use:
