@@ -2,9 +2,9 @@
 
 ## Mitmproxy setup (for macbook):
 1. If not already installed, install Homebrew, see https://brew.sh/.   Use:
-
+<ul> <li style="list-style-type: none;">
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-
+</ul
 2. Install mitmproxy, see https://mitmproxy.org/.  Use:
 
 `brew install mitmproxy`
