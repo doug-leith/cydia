@@ -2,10 +2,12 @@
 #import <Security/SecureTransport.h>
 #import <Security/Security.h>
 #import <Security/SecTrust.h>
+# private API:
+OSStatus SecTrustEvaluateFastAsync(SecTrustRef trust, dispatch_queue_t queue, SecTrustCallback result);
 #import "substrate.h"
 #import <dlfcn.h>
 
-/*static OSStatus (*original_SecTrustEvaluate)(SecTrustRef trust, SecTrustResultType *result);
+static OSStatus (*original_SecTrustEvaluate)(SecTrustRef trust, SecTrustResultType *result);
 static OSStatus replaced_SecTrustEvaluate(SecTrustRef trust, SecTrustResultType *result) {
     NSLog(@"Entering replaced_SecTrustEvaluate()");
     original_SecTrustEvaluate(trust, result);
@@ -26,7 +28,13 @@ static OSStatus replaced_SecTrustSetPolicies(void* a, void* policies){
   NSLog(@"Entering replaced_SecTrustSetPolicies()");
   return 0;
 }
-*/
+
+static OSStatus (*original_SecTrustEvaluateFastAsync)(void* trust, void* queue, SecTrustCallback result);
+static OSStatus replaced_SecTrustEvaluateFastAsync(void* trust, void* queue, SecTrustCallback result){
+	NSLog(@"Entering replaced_SecTrustEvaluateFastAsync()");
+	(result)(trust,1);  // call the callback with success result
+	return 0;
+}
 
 #define SSL_VERIFY_NONE 0
 // Constant defined in BoringSSL
@@ -48,10 +56,10 @@ static void replaced_SSL_set_custom_verify(void *ssl, int mode, int (*callback)(
     return;
 }
 
-/*static int replaced_boringssl_context_set_verify_mode(void *a, void* b) {
+static int replaced_boringssl_context_set_verify_mode(void *a, void* b) {
     NSLog(@"Entering replaced_boringssl_context_set_verify_mode()");
     return 0;
-}*/
+}
 char *replaced_SSL_get_psk_identity(void *ssl) {
     NSLog(@"Entering replaced_SSL_get_psk_identity()");
     return "notarealPSKidentity";
@@ -61,13 +69,14 @@ __attribute__((constructor))
 static void init(int argc, const char **argv){
 NSLog(@"unpin started");
 
-/*MSHookFunction((void *) SecTrustEvaluate,(void *)  replaced_SecTrustEvaluate, (void **) &original_SecTrustEvaluate);
+MSHookFunction((void *) SecTrustEvaluate,(void *)  replaced_SecTrustEvaluate, (void **) &original_SecTrustEvaluate);
 NSLog(@"SecTrustEvaluate() hooked");
 MSHookFunction((void *) SecTrustEvaluateWithError,(void *)  replaced_SecTrustEvaluateWithError, (void **) &original_SecTrustEvaluateWithError);
 NSLog(@"SecTrustEvaluateWithError() hooked");
 MSHookFunction((void *) SecTrustSetPolicies,(void *)  replaced_SecTrustSetPolicies, (void **) &original_SecTrustSetPolicies);
 NSLog(@"SecTrustEvaluateSetPolicies() hooked");
-*/
+MSHookFunction((void *) SecTrustEvaluateFastAsync,(void *)  replaced_SecTrustEvaluateFastAsync, (void **) &original_SecTrustEvaluateFastAsync);
+NSLog(@"SecTrustEvaluateFastAsync() hooked");
 
 void* boringssl_handle = dlopen("/usr/lib/libboringssl.dylib", RTLD_NOW);
 void *SSL_set_custom_verify = dlsym(boringssl_handle, "SSL_set_custom_verify");
@@ -80,11 +89,11 @@ if (SSL_get_psk_identity) {
      MSHookFunction((void *) SSL_get_psk_identity, (void *) replaced_SSL_get_psk_identity,  (void **) NULL);
      NSLog(@"SSL_get_psk_identity() hooked.");
  }
-/*void *boringssl_context_set_verify_mode = dlsym(boringssl_handle, "boringssl_context_set_verify_mode");
+void *boringssl_context_set_verify_mode = dlsym(boringssl_handle, "boringssl_context_set_verify_mode");
 if (boringssl_context_set_verify_mode) {
   MSHookFunction((void *) boringssl_context_set_verify_mode, (void *) replaced_boringssl_context_set_verify_mode,  (void **) NULL);
   NSLog(@"boringssl_context_set_verify_mode() hooked.");
-}*/
+}
 
 }
 
