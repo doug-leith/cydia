@@ -36,7 +36,7 @@
 ## Mitmproxy setup (Raspberry Pi)
 1. A Raspberry Pi is fine for running mitmproxy too, and much cheaper than a Macbook!  But best to use a newer Raspberry Pi 4 as I've had trouble trying to use an older Pi 3.   To set it up, first follow the [instructions](https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md) to configure Pi as a Wifi router.
 
-2. Install mitmproxy using `apt-get install mitmproxy`.   Setup the firewall rules to redirect traffic to mitmproxy by running this [https://raw.githubusercontent.com/doug-leith/cydia/main/mitm_iptables.conf](shell script).
+2. Install mitmproxy using `apt-get install mitmproxy`.   Setup the firewall rules to redirect traffic to mitmproxy by running this [shell script](https://raw.githubusercontent.com/doug-leith/cydia/main/mitm_iptables.conf).
 
 3. Run mitmproxy using e.g. `mitmdump --mode transparent --showhost --ssl-insecure --rawtcp`
 
