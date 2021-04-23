@@ -8,3 +8,7 @@ scp -3 packages/com.leith.unpin_0.0.1-16+debug_iphoneos-arm.deb scp://root@local
 (password is "alpine")
 
 to change processes hooked edit unpin.plist
+
+theos is at ~/theos.  skds are at ~/theos/sdks.  patched sdks are at:
+
+https://github.com/theos/sdks

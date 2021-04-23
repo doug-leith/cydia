@@ -2,8 +2,9 @@
 #import <Security/SecureTransport.h>
 #import <Security/Security.h>
 #import <Security/SecTrust.h>
-# private API:
+// private API:
 OSStatus SecTrustEvaluateFastAsync(SecTrustRef trust, dispatch_queue_t queue, SecTrustCallback result);
+OSStatus SecTrustEvaluateFastAsyncWithError(SecTrustRef trust, dispatch_queue_t queue, SecTrustWithErrorCallback result);
 #import "substrate.h"
 #import <dlfcn.h>
 
@@ -35,6 +36,13 @@ static OSStatus replaced_SecTrustEvaluateFastAsync(void* trust, void* queue, Sec
 	(result)(trust,1);  // call the callback with success result
 	return 0;
 }
+
+/*static OSStatus (*original_SecTrustEvaluateFastAsyncWithError)(void* trust, void* queue, SecTrustWithErrorCallback result);
+static OSStatus replaced_SecTrustEvaluateFastAsyncWithError(void* trust, void* queue, SecTrustWithErrorCallback result){
+	NSLog(@"Entering replaced_SecTrustEvaluateFastAsyncWithError()");
+	(result)(trust,true,0);  // call the callback with success result
+	return 0;
+}*/
 
 #define SSL_VERIFY_NONE 0
 // Constant defined in BoringSSL
@@ -77,6 +85,8 @@ MSHookFunction((void *) SecTrustSetPolicies,(void *)  replaced_SecTrustSetPolici
 NSLog(@"SecTrustEvaluateSetPolicies() hooked");
 MSHookFunction((void *) SecTrustEvaluateFastAsync,(void *)  replaced_SecTrustEvaluateFastAsync, (void **) &original_SecTrustEvaluateFastAsync);
 NSLog(@"SecTrustEvaluateFastAsync() hooked");
+//MSHookFunction((void *) SecTrustEvaluateFastAsyncWithError,(void *)  replaced_SecTrustEvaluateFastAsyncWithError, (void **) &original_SecTrustEvaluateFastAsyncWithError);
+//NSLog(@"SecTrustEvaluateFastAsyncWithError() hooked");
 
 void* boringssl_handle = dlopen("/usr/lib/libboringssl.dylib", RTLD_NOW);
 void *SSL_set_custom_verify = dlsym(boringssl_handle, "SSL_set_custom_verify");

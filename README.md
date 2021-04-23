@@ -31,7 +31,14 @@
 
   * Update the permissions using `chmod a+r ~/.mitmproxy/mitmproxy-ca.pem`
 
-  * Now type `sudo -u nobody mitmdump --mode transparent --showhost --ssl-insecure` to startup mitmproxy.  Traffic from the phone will now be routed to mitmproxy.  Typically you'll see errors as the phone detects the presence of mitmproxy intercepting connections.
+  * Now type `sudo -u nobody mitmdump --mode transparent --showhost --ssl-insecure --rawtcp` to startup mitmproxy.  Traffic from the phone will now be routed to mitmproxy.  Typically you'll see errors as the phone detects the presence of mitmproxy intercepting connections.
+
+## Mitmproxy setup (Raspberry Pi)
+1. A Raspberry Pi is fine for running mitmproxy too, and much cheaper than a Macbook!  But best to use a newer Raspberry Pi 4 as I've had trouble trying to use an older Pi 3.   To set it up, first follow the [https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md](instructions) to configure Pi as a Wifi router.
+
+2. Install mitmproxy using `apt-get install mitmproxy`.   Setup the firewall rules to redirect traffic to mitmproxy by running this [https://raw.githubusercontent.com/doug-leith/cydia/main/mitm_iptables.conf](shell script).
+
+3. Run mitmproxy using e.g. `mitmdump --mode transparent --showhost --ssl-insecure --rawtcp`
 
 ## Install mitmproxy CA cert as trusted on phone
 The next step is to install the CA cert of mitmproxy as a trusted cert on the phone.  
