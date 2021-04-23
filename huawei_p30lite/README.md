@@ -14,7 +14,7 @@ This is much more involved than for any of the other handsets I've looked at sin
 
 5. Reboot to fastboot mode (power off, disconnect usb cable, press volume key down, reconnect usb cable and will power up).  Enter:
 
->fastboot flash recovery_ramdisk magisk_patched_riL6c.img
+> fastboot flash recovery_ramdisk magisk_patched_riL6c.img
 
 (you can grab the [magisk_patched_riL6c.img](magisk_patched_riL6c.img) file from this github repository).
 
@@ -30,9 +30,26 @@ This is the same as for other handsets.
 
 This is much more involved for the Huawei handset since many of the system apps pin SSL certs based on a keystore embedded within the app itself.  This means that changing system level settings, such as making the mitmproxy CA cert trusted, are not enough.  Hooking of the system apps via Frida isn't viable as memory protection prevents Frida from attaching to processes (the SELinux rules also make things harder since the permissive option is disabled, but this can be worked around by creating appropriate file tags).   Modifying the system apk's to remove the pinning checks/insert mitmproxy as a valid cert doesn't work because the signature of the modified apk doesn't match what the system expects.   The solution is to use EdXposed, which modifies Zygote early in the boot process (before the memory protections kick in).  Because the first Zygote process is then cloned by all later apps, the EdXposed mods are imported into the later apps despite the memory protection measures.  
 
-1. Open the Magisk app and install the Riru module and the EdXposed module.  Reboot (in rooted mode) to enable them.
+1. Open the Magisk app and install the Riru module and the EdXposed module.  Alternatively, you can copy the [riru-v25.4.2-release](riru-v25.4.2-release.zip) and [EdXposed-v0.5.2.2_4683-master-release.zip](EdXposed-v0.5.2.2_4683-master-release.zip) files from this repository, copy them to the handset using adb e.g. `adb push riru-v25.4.2-release.zip /sdcard/Download/` and `adb push EdXposed-v0.5.2.2_4683-master-release.zip /sdcard/Download/` and in the Magisk app select the install modules from storage option.  Reboot (in rooted mode) to enable them.
 
-2. Install [JustTrustMe_DL.apk](JustTrustMe_DL.apk) from this github repository.   Open the EdXposed manager app, click on the "Modules" entry on top-right menu, enable JustTrustMe module.  Reboot again to enable this module.  That should unpin nearly all the system processes.
+2. Install [JustTrustMe_DL.apk](JustTrustMe_DL.apk) from this github repository using `adb install JustTrustMe_DL.apk`.   Open the EdXposed manager app, click on the "Modules" entry on top-right menu, enable JustTrustMe module.  Reboot again (in rooted mode)  to enable this module.  That should unpin nearly all the system processes.
 
+## Factory Reset by TWRP Wipe
 
+1. Boot into fastboot mode.  Flash TWRP using 
 
+> fastboot flash recovery_ramdisk twrp.img
+
+(you can grab the [twrp.img](twrp.img) file from this github repository).  
+
+2.  Reboot into recovery (power off, remove usb cable, press volume up key+power key until Huawei logo appears) and twrp should start.  Select Wipe and swipe the toggle for factory reset.  In addition select Advanced, tick the Internal Storage box and wipe this too (this clears the /data/media folder which is mounted as /sdcard on the phone, if it wiped then its encrypted and you'll just see garbage following the factory reset).
+
+3. Reboot into fastboot mode.  Flash Magisk using
+
+> fastboot flash recovery_ramdisk magisk_patched_riL6c.img
+
+(as before you can grab the [magisk_patched_riL6c.img](magisk_patched_riL6c.img) file from this github repository).
+
+4. Power off, remove usb cable, press volume up key+power key until Huawei logo appears.    Phone will be slower to boot as it needs to regenerate the /data partition.  When it starts it will be at the onboarding screen (like when the phone was first started from new).
+
+5. Install/re-install the Magisk app and open.  Reboot to finish installation of Magisk.  Note: Magisk app downloads some components needed by Magisk from the web and so needs network access.  Without this Magisk is only partially installed and in particular the Riru and EdXposed modules won't install.   This need for network access can be avoided, but involves more work.  Copy the [busybox](busybox) and [util_functions.sh](util_functions.sh) files to the /data/adb/Magisk/ folder on the phone using adb (you'll need top push the files first to /data/local/tmp, then use adb shell su to copy them to /data/adb/Magisk/).  Now reboot.  It should now be possible to install Riru and EdXposed from storage.
