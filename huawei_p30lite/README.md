@@ -1,12 +1,12 @@
-# Huawei P30 Rooting Etc
+# Huawei P30 Lite Rooting Etc
 
 ## Rooting
 
-This is much more involved than for any of the other handsets I've looked at since Huawei no longer officially support bootloader unlocking.   The method here is based on https://forum.xda-developers.com/t/p30-lite-unlock-bootloader-paid-install-twrp-lineage-os-17-1-gsi.4235989/.
+This is much more involved than for any of the other handsets I've looked at since Huawei no longer officially support bootloader unlocking.   The method here is based on https://forum.xda-developers.com/t/p30-lite-unlock-bootloader-paid-install-twrp-lineage-os-17-1-gsi.4235989/ but the details there now seem to have been deleted.
 
 1. Obtain [HCU Client](https://hcu-client.com/) and [buy a 3 day license](https://www.dc-unlocker.com/buy) (€19).  You need a windows machine to run HCU client.
 
-2. Open back of phone (its not too hard, but you need the right tools or you might damage the phone).  Connect phone by USB cable to windows machine running HCU client.  Short the phone test point and power on phone.  Phone starts to a blank screen i.e. it looks like nothing has happened.  But HCU client should detect the device if it went ok.
+2. Open back of phone (its not too hard, but you need the right tools or you might damage the phone).  Connect phone by USB cable to windows machine running HCU client.  Short the phone test point and power on phone.  Phone starts to a blank screen i.e. it looks like nothing has happened.  But HCU client should detect the device if it went ok.   Note: to short the test point connect the pad shown in this [image](testpoint.png) to ground (i.e. to the metal case beside it) using e.g. a paperclip.
 
 3. Use HCU client to unlock bootloader, and reboot phone.   This [image](PXL_20210322_074233839.jpg) shows the HCU client screen.  Select Kirin710_P1_v2 in the drop down menu, select bootload unlock and tick "reboot after repair"
 
