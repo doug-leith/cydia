@@ -2,7 +2,7 @@
 
 ## Rooting
 
-This is much more involved than for any of the other handsets I've looked at since Huawei no longer officially support bootloader unlocking.   The method here is based on (https://forum.xda-developers.com/t/p30-lite-unlock-bootloader-paid-install-twrp-lineage-os-17-1-gsi.4235989/).
+This is much more involved than for any of the other handsets I've looked at since Huawei no longer officially support bootloader unlocking.   The method here is based on https://forum.xda-developers.com/t/p30-lite-unlock-bootloader-paid-install-twrp-lineage-os-17-1-gsi.4235989/.
 
 1. Obtain [HCU Client](https://hcu-client.com/) and [buy a 3 day license](https://www.dc-unlocker.com/buy) (€19).  You need a windows machine to run HCU client.
 
