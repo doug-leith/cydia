@@ -109,3 +109,7 @@ The password in "alpine".  To copy files off of phone use:
 3. Once libimobiledevice is installed, to get device details use:
 
   * `ideviceinfo`
+  
+## Huawei Setup
+
+Rooting a Huawei handset is more involved than for other handsets since Huawei no longer officially support bootloader unlocking.  Extra steps are also needed to unpin SSL cert checks made by system processes.  See [here](huawei_p30lite/README.md) for more details
