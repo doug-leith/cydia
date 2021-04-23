@@ -36,6 +36,8 @@ This is much more involved for the Huawei handset since many of the system apps 
 
 ## Factory Reset by TWRP Wipe
 
+To do a full factory reset we need to install TWRP, then reinstall Magisk, as follows:
+
 1. Boot into fastboot mode.  Flash TWRP using 
 
 > fastboot flash recovery_ramdisk twrp.img
