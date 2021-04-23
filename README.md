@@ -14,7 +14,7 @@
   * In the "To computers using" box choose Wi-Fi.  
   * Click start.  You should see the Wifi icon in the top bar of the macbook change to be grayed out.  Your macbook is now acting as a WiFi access point.  Devices connecting to it will have their traffic routed over the wired ethernet cable connected to the macbook.  The name of the Wifi network will be the same as the name of the macbook, on your phone open settings, look for the available Wifi networks and connect to the macbook.
 
-4. Setup transparent proxying using mitmproxy, see [ https://docs.mitmproxy.org/stable/howto-transparent/]( https://docs.mitmproxy.org/stable/howto-transparent/) for details.  In summary:
+4. Setup transparent proxying using mitmproxy, see [https://docs.mitmproxy.org/stable/howto-transparent/]( https://docs.mitmproxy.org/stable/howto-transparent/) for details.  In summary:
 
   * Download file [https://raw.githubusercontent.com/doug-leith/cydia/main/pf.conf](pf.conf) which contains these two lines:
 
@@ -34,7 +34,7 @@
   * Now type `sudo -u nobody mitmdump --mode transparent --showhost --ssl-insecure --rawtcp` to startup mitmproxy.  Traffic from the phone will now be routed to mitmproxy.  Typically you'll see errors as the phone detects the presence of mitmproxy intercepting connections.
 
 ## Mitmproxy setup (Raspberry Pi)
-1. A Raspberry Pi is fine for running mitmproxy too, and much cheaper than a Macbook!  But best to use a newer Raspberry Pi 4 as I've had trouble trying to use an older Pi 3.   To set it up, first follow the [https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md](instructions) to configure Pi as a Wifi router.
+1. A Raspberry Pi is fine for running mitmproxy too, and much cheaper than a Macbook!  But best to use a newer Raspberry Pi 4 as I've had trouble trying to use an older Pi 3.   To set it up, first follow the [instructions](https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md) to configure Pi as a Wifi router.
 
 2. Install mitmproxy using `apt-get install mitmproxy`.   Setup the firewall rules to redirect traffic to mitmproxy by running this [https://raw.githubusercontent.com/doug-leith/cydia/main/mitm_iptables.conf](shell script).
 
