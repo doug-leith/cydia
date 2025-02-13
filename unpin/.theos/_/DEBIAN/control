@@ -6,5 +6,5 @@ Maintainer: Doug Leith
 Author: Doug Leith
 Section: Tweaks
 Depends: mobilesubstrate (>= 0.9.5000)
-Version: 0.0.1-25+debug
+Version: 0.0.1-26+debug
 Installed-Size: 72

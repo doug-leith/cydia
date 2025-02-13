@@ -1,1 +1,31 @@
-{ Filter = { Bundles = ("com.apple.softwareupdated","com.apple.AssetCacheLocatorService","com.apple.imfoundation.IMRemoteURLConnectionAgent", "com.apple.mobileactivationd", "com.apple.itunescloudd", "com.apple.identityservicesd", "com.apple.aps.framework", "com.apple.akd", "com.apple.AuthKit", "com.apple.UIKit", "com.apple.itunesstored", "com.apple.Maps" ); }; }
+{
+	Filter = {
+		Bundles = (
+			"com.apple.Accounts",
+			"com.apple.securityd",
+			"com.apple.softwareupdated",
+			"com.apple.AssetCacheLocatorService",
+			"com.apple.imfoundation.IMRemoteURLConnectionAgent",
+			"com.apple.mobileactivationd",
+			"com.apple.itunescloudd",
+			"com.apple.identityservicesd",
+			"com.apple.aps.framework",
+			"com.apple.akd",
+			"com.apple.AuthKit",
+			"com.apple.UIKit",
+			"com.apple.itunesstored",
+			"com.apple.Maps",
+			"com.apple.GeoServices",
+			"com.apple.mobilesafari",
+			"com.apple.SafariBookmarksSyncAgent",
+			"com.apple.Safari.SafeBrowsing",
+			"com.apple.AssistantServices",
+			"com.apple.siri.analyzer",
+			"com.apple.siri.embeddedspeech",
+			"com.apple.WebKit.Networking",
+			"com.apple.WebKit.WebContent",
+			"com.apple.cloudkit.CloudKitDaemon",
+			"com.apple.iTunesCloud",
+		);
+	};
+}

@@ -9,7 +9,7 @@
 
 3. Setup macbook as wireless AP:
   * Connect macbook to one end of a wired ethernet cable (you'll need a usb-to-ethernet adapter for this) and connect other end of ethernet cable to an internet gateway e.g. your home router.   This will be used to connect the macbook to the internet.
-  * Open Settings, go to Sharing and click on "Internet Sharing".  
+  * Open Settings, go to General, Sharing and click on "Internet Sharing".  
   * In the "Share your connect from" drop down box select the wired ethernet connection.  
   * In the "To computers using" box choose Wi-Fi.  
   * Click start.  You should see the Wifi icon in the top bar of the macbook change to be grayed out.  Your macbook is now acting as a WiFi access point.  Devices connecting to it will have their traffic routed over the wired ethernet cable connected to the macbook.  The name of the Wifi network will be the same as the name of the macbook, on your phone open settings, look for the available Wifi networks and connect to the macbook.
@@ -36,7 +36,7 @@
 ## Mitmproxy setup (Raspberry Pi)
 1. A Raspberry Pi is fine for running mitmproxy too, and much cheaper than a Macbook!  But best to use a newer Raspberry Pi 4 as I've had trouble trying to use an older Pi 3.   To set it up, first follow the [instructions](https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md) to configure Pi as a Wifi router.
 
-2. Install mitmproxy using `apt-get install mitmproxy`.   Setup the firewall rules to redirect traffic to mitmproxy by running this [shell script](https://raw.githubusercontent.com/doug-leith/cydia/main/mitm_iptables.conf).
+2. Install mitmproxy by downloading the binary from https://mitmproxy.org/downloads/using (the version installed by `apt-get install mitmproxy` lags the latest release quite a bit).   Setup the firewall rules to redirect traffic to mitmproxy by running this [shell script](https://raw.githubusercontent.com/doug-leith/cydia/main/mitm_iptables.conf).
 
 3. Run mitmproxy using e.g. `mitmdump --mode transparent --showhost --ssl-insecure --rawtcp`
 
@@ -51,29 +51,15 @@ The next step is to install the CA cert of mitmproxy as a trusted cert on the ph
 
 ### Android
 To install a trusted (or system) CA cert on Android requires rooting the phone.
-1. Root your phone - typically this involves unlocking the bootloader (often the hardest task!), then using fastboot to install TWRP recovery and then sideloading Magisk to patch the system boot image.  The details of rooting are phone dependent, but you want to get to a setup where you have access to a rooted adb shell and have Magisk installed.
+1. Root your phone - typically this involves unlocking the bootloader (often the hardest task!).  The details of rooting are phone dependent, but you want to get to a setup where you have access to a rooted adb shell and have Magisk https://github.com/topjohnwu/Magisk installed.
 
-2. Create a file with the mitmproxy CA cert in Android compatible format by:
-	* `cd ~/.mitmproxy/`
-	* `openssl x509 -inform PEM -subject_hash_old -in mitmproxy-ca-cert.cer | head -1`
-	* Suppose the output of the last command is `c8450d0d`, now copy `mitmproxy-ca-cert.cer` to `c8450d0d.0`:
-	* cp mitmproxy-ca-cert.cer c8750f0d.0
-	* (See [https://docs.mitmproxy.org/stable/howto-install-system-trusted-ca-android/](https://docs.mitmproxy.org/stable/howto-install-system-trusted-ca-android/) for mitmproxy docs on this).
+2. Download the Trustusercerts Magisk module from https://github.com/lupohan44/TrustUserCertificates or use my local copy https://raw.githubusercontent.com/doug-leith/cydia/main/trustusercerts-v1.2.zip](trustusercerts-v1.2.zip).  Connect the phone to a laptop by usb cable and on the laptop use `adb shell push trustusercerts-v1.2.zip /sdcard/Download` to copy the module to the phone.  On the phone, open the Magisk app and install the trustusercerts-v1.2.zip module from storage (it is in the phone Downloads folder).  
 
-3. Edit the shell scripts [cacert_setup.sh](cacert_setup.sh) and [cacert.sh](cacert.sh) to use the your cert filename (i.e. edit the `c8750f0d.0` entries to match the output from the openssl command you used above).
-	
-3. Once you have your phone rooted, connect the phone to a laptop by usb cable and on the laptop type the following commands to copy files from your laptop to the phone:
-	* `adb push cacert* /data/local/tmp/`
-	* `adb push c8750f0d.0 /data/local/tmp/`
-	
-4. Now open an adb shell by typing `adb shell`.
+2. On the wifi access point running mitmdump, copy the file `mitmproxy-ca-cert.pem` from folder `~/.mitmproxy/`.  This is the CA cert that mitmdump uses to sign https certs when it intercepts network connections.  Copy the mitmproxy CA cert to the phone:  
+	* `adb push mitmproxy-ca-cert.pem /sdcard/Download`  
+On the phone install the mitmproxy CA cert as a client CA insert.  The details change from phone to phone, but tyically open the Settings app, then the Security screen, scroll down and there is usually an "Encryptions" or "Additional Security Settings" button, click that.  Then select "Install CA cert", skip past the warnings, and select the `mitmproxy-ca-cert.pem` file from the phone Downloads folder.
 
-5. In the adb shell type `su` to get root access and type the following commands:
-	* `chmod a+x cacert*`
-	* `cp cacert.sh /data/adb/service.d/`
-	* `./cacert_setup.sh`  
-	* What are these  commands doing?  Files in folder `/data/adb/service.d/` are executed by Magisk on startup, so placing cacert.sh causes the mitmproxy CA cert to one setup automatically after a restart of the phone (otherwise its wiped).  On Android 10 and later the `/system folder` is mounted as readonly and this cannot be changed, so the scripts mount an writeable overlay at `/system/etc/security/cacerts/`, copy the existing system certs into that together with the mitmproxy cert and then set the permissions and selinux labels to the appropriate values.
-	* You can check that the mitmproxy cert has been successfully installed by looking at Settings-Security-Encryptions and credentials-Trusred Credentials on the phone - that lists the trusted CA certs and mitmproxy should be listed there if things worked ok.
+3. Restart the phone.  The Trustusercerts Magisk module should promote the client CA cert that you installed to a system cert.  You can check that the mitmproxy cert has been successfully installed by looking at Settings-Security-Encryptions and credentials-Trusted Credentials on the phone - that lists the trusted CA certs and mitmproxy should be listed there if things worked ok.
 	* Note: installing the mitmproxy cert as a system cert is enough to allow the traffic generated by Google Play Services etc to be decrypted by mitmproxy, but other apps may include additional pinning of SSL certs.  Those need to be treated on a case by case basis, and typically require use of a custom [Frida](https://frida.re/) script to bypass the checks.
 
 ## iPhone Cydia Substrate setup:
