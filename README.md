@@ -78,15 +78,14 @@ palera1n uses the checkm8 bootrom exploit, so it works only on A8-A11 devices (e
 4. Open Sileo and install:
   * `openssh-server` (ssh access), `ellekit` (tweak injection) and `PreferenceLoader` (settings pane for tweaks);
   * optional: `rsync`; and Frida, after adding the source [https://build.frida.re](https://build.frida.re), see [https://frida.re/docs/ios/](https://frida.re/docs/ios/).
-5. Reboot the phone and jailbreak it again with `palera1n -l` (step 2).
-6. Install SSL Kill Switch 3, my modified version of [https://github.com/NyaMisty/ssl-kill-switch3](https://github.com/NyaMisty/ssl-kill-switch3), which also hooks Apple system processes.  Source: folder `ssl-kill-switch3-DL` of [https://github.com/doug-leith/poor-privacy-practices-of-the-apple-app-store](https://github.com/doug-leith/poor-privacy-practices-of-the-apple-app-store).  Build the rootless package with [Theos](https://theos.dev/) (`make package ROOTLESS=1`), or use the prebuilt `moe.misty.sslkillswitch3_1.1-6+rootless_iphoneos-arm64.deb` in this repo.  Then copy it to the phone and install it:
+5. Install SSL Kill Switch 3, my modified version of [https://github.com/NyaMisty/ssl-kill-switch3](https://github.com/NyaMisty/ssl-kill-switch3), which also hooks Apple system processes.  Source: folder `ssl-kill-switch3-DL` of [https://github.com/doug-leith/poor-privacy-practices-of-the-apple-app-store](https://github.com/doug-leith/poor-privacy-practices-of-the-apple-app-store).  Build the rootless package with [Theos](https://theos.dev/) (`make package ROOTLESS=1`), or use the prebuilt `ssl-kill-switch3-DL.deb` in this repo (version 1.1-6).  Then copy it to the phone and install it:
 
-  * `scp moe.misty.sslkillswitch3_1.1-6+rootless_iphoneos-arm64.deb mobile@<phone IP>:/var/jb/var/mobile/`
+  * `scp ssl-kill-switch3-DL.deb mobile@<phone IP>:/var/jb/var/mobile/`
   * `ssh mobile@<phone IP>`
-  * `sudo dpkg -i /var/jb/var/mobile/moe.misty.sslkillswitch3_1.1-6+rootless_iphoneos-arm64.deb`
+  * `sudo dpkg -i /var/jb/var/mobile/ssl-kill-switch3-DL.deb`
 
-7. On the phone open Settings; at the bottom there is now an entry "SSL Kill Switch 3".  Open it and enable "Disable Certificate Validation".  The tweak is loaded when a process starts, so reboot and jailbreak again with `palera1n -l` (step 2) so that all system processes pick it up.
-8. Change the Wifi settings to connect to the mitmproxy access point and install the mitmproxy CA cert as described above.  You should now see connections by system processes being successfully decoded by mitmproxy.  You may see some warning messages about self-signed certs (these are Apple certs), but the `--ssl-insecure` option to mitmdump allows these to pass.
+6. On the phone open Settings; at the bottom there is now an entry "SSL Kill Switch 3".  Open it and enable "Disable Certificate Validation".  The tweak is loaded when a process starts, so reboot and jailbreak again with `palera1n -l` (step 2) so that all system processes pick it up.
+7. Change the Wifi settings to connect to the mitmproxy access point and install the mitmproxy CA cert as described above.  You should now see connections by system processes being successfully decoded by mitmproxy.  You may see some warning messages about self-signed certs (these are Apple certs), but the `--ssl-insecure` option to mitmdump allows these to pass.
 
 Notes:
 1. To access the iPhone from the command line over USB, install libimobiledevice using `brew install libimobiledevice` (see [https://libimobiledevice.org/](https://libimobiledevice.org/)).  Then use:
