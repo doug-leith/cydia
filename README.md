@@ -83,8 +83,9 @@ palera1n uses the checkm8 bootrom exploit, so it works only on A8-A11 devices (e
   * `scp ssl-kill-switch3-DL.deb mobile@<phone IP>:/var/jb/var/mobile/`
   * `ssh mobile@<phone IP>`
   * `sudo dpkg -i /var/jb/var/mobile/ssl-kill-switch3-DL.deb`
+  * `sudo killall -9 SpringBoard` (respring, so that the new settings entry appears; close the Settings app first if it is open)
 
-6. On the phone open Settings; at the bottom there is now an entry "SSL Kill Switch 3".  Open it and enable "Disable Certificate Validation".  The tweak is loaded when a process starts, so reboot and jailbreak again with `palera1n -l` (step 2) so that all system processes pick it up.
+6. On the phone open Settings; at the bottom there is now an entry "SSL Kill Switch 3 DL".  Open it and enable "Disable Certificate Validation".  The tweak is loaded when a process starts, so reboot and jailbreak again with `palera1n -l` (step 2) so that all system processes pick it up.
 7. Change the Wifi settings to connect to the mitmproxy access point and install the mitmproxy CA cert as described above.  You should now see connections by system processes being successfully decoded by mitmproxy.  You may see some warning messages about self-signed certs (these are Apple certs), but the `--ssl-insecure` option to mitmdump allows these to pass.
 
 Notes:
