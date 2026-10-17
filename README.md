@@ -89,8 +89,7 @@ palera1n uses the checkm8 bootrom exploit, so it works only on A8-A11 devices (e
 8. Change the Wifi settings to connect to the mitmproxy access point and install the mitmproxy CA cert as described above.  You should now see connections by system processes being successfully decoded by mitmproxy.  You may see some warning messages about self-signed certs (these are Apple certs), but the `--ssl-insecure` option to mitmdump allows these to pass.
 
 Notes:
-1. The `unpin` package in this repo (and the Cydia source [https://doug-leith.github.io/cydia/](https://doug-leith.github.io/cydia/)) is for the old rootful checkra1n/Cydia setup and does not install on a rootless palera1n jailbreak.  Use SSL Kill Switch 3 instead.
-2. To access the iPhone from the command line over USB, install libimobiledevice using `brew install libimobiledevice` (see [https://libimobiledevice.org/](https://libimobiledevice.org/)).  Then use:
+1. To access the iPhone from the command line over USB, install libimobiledevice using `brew install libimobiledevice` (see [https://libimobiledevice.org/](https://libimobiledevice.org/)).  Then use:
 
 >`iproxy 2222 22 &`
 
@@ -102,7 +101,7 @@ and use `sudo` for root.  The password is the one you set when installing Sileo.
 
 On a rootless jailbreak, jailbreak files (packages, tweaks, `/var/jb/usr/bin` tools) live under `/var/jb`.
 
-3. Once libimobiledevice is installed, to get device details use:
+2. Once libimobiledevice is installed, to get device details use:
 
   * `ideviceinfo`
 
