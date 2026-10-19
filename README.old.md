@@ -16,7 +16,7 @@
 
 4. Setup transparent proxying using mitmproxy, see [https://docs.mitmproxy.org/stable/howto-transparent/]( https://docs.mitmproxy.org/stable/howto-transparent/) for details.  In summary:
 
-  * Download file [https://raw.githubusercontent.com/doug-leith/cydia/main/pf.conf](pf.conf) which contains these two lines:
+  * Download file [https://raw.githubusercontent.com/doug-leith/mitm-capture-setup/main/pf.conf](pf.conf) which contains these two lines:
 
 >`rdr on bridge100 inet proto tcp to any port {80,443} -> 127.0.0.1 port 8080`
 >`block drop quick on bridge100 inet proto udp to any port 443`
@@ -36,7 +36,7 @@
 ## Mitmproxy setup (Raspberry Pi)
 1. A Raspberry Pi is fine for running mitmproxy too, and much cheaper than a Macbook!  But best to use a newer Raspberry Pi 4 as I've had trouble trying to use an older Pi 3.   To set it up, first follow the [instructions](https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md) to configure Pi as a Wifi router.
 
-2. Install mitmproxy using `apt-get install mitmproxy`.   Setup the firewall rules to redirect traffic to mitmproxy by running this [shell script](https://raw.githubusercontent.com/doug-leith/cydia/main/mitm_iptables.conf).
+2. Install mitmproxy using `apt-get install mitmproxy`.   Setup the firewall rules to redirect traffic to mitmproxy by running this [shell script](https://raw.githubusercontent.com/doug-leith/mitm-capture-setup/main/mitm_iptables.conf).
 
 3. Run mitmproxy using e.g. `mitmdump --mode transparent --showhost --ssl-insecure --rawtcp`
 
@@ -86,7 +86,7 @@ To bypass SSL cert checks made by iPhone system processes its necessary to jailb
 4. Install custom ssl unpinning package:
   * Open Cydia app.
   * Click on "sources" tab at bottom, then click "Edit" and "Add".  Enter [https://doug-leith.github.io/cydia/](https://doug-leith.github.io/cydia/) as new source.
-  * Click on new source, the on "Tweaks" and install the "unpin" package.  Note: source code for unpin package is at [https://github.com/doug-leith/cydia](https://github.com/doug-leith/cydia)
+  * Click on new source, the on "Tweaks" and install the "unpin" package.  Note: source code for unpin package is at [https://github.com/doug-leith/mitm-capture-setup](https://github.com/doug-leith/mitm-capture-setup)
   * We need to restart all of the system processes in order to activate the unpin package.  To do that, with phone connected by usb cable to macbook, run Checkra1n again.   
   * Once the phone has rebooted, change the settings to connect to the mitmproxy access point.  You should now see all connections being successfully decoded by mitmproxy (you may see some warning messages warning about self-signed certs (these are Apple certs) but the `--ssl-insecure` option to mitmdump allows these to pass).
 
