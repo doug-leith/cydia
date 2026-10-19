@@ -40,8 +40,6 @@
 
 3. Run mitmproxy using e.g. `mitmdump --mode transparent --showhost --ssl-insecure --rawtcp`
 
-4. Optional: Apple push notifications (apsd) use TCP port 5223 (falling back to 443), which the script above does not redirect, so by default push traffic bypasses mitmproxy.  To intercept it too, also redirect port 5223 for the phone, e.g. `sudo iptables -t nat -A PREROUTING -i wlan0 -s <phone IP> -p tcp --dport 5223 -j REDIRECT --to-port 8080`.  Push traffic is not HTTP, so mitmproxy shows it as raw TCP; decoding it needs a dedicated mitmproxy addon.
-
 ## Install mitmproxy CA cert as trusted on phone
 The next step is to install the CA cert of mitmproxy as a trusted cert on the phone.  
 ### iPhone
@@ -108,3 +106,63 @@ On a rootless jailbreak, jailbreak files (packages, tweaks, `/var/jb/usr/bin` to
 ## Huawei Setup
 
 Rooting a Huawei handset is more involved than for other handsets since Huawei no longer officially support bootloader unlocking.  Extra steps are also needed to unpin SSL cert checks made by system processes.  See [here](huawei_p30lite/README.md) for more details
+
+## Capturing traffic
+
+### Saving a capture to a file
+Add `-w <file>` to the mitmdump command used above. mitmdump then saves every connection to that file as well as printing it:
+
+* macOS: `sudo -u nobody mitmdump --mode transparent --showhost --ssl-insecure --rawtcp -w /tmp/capture.mitm`. When mitmdump runs as user `nobody` it can only write to a folder that `nobody` can write to, such as `/tmp`.
+* Raspberry Pi: `mitmdump --mode transparent --showhost --ssl-insecure --rawtcp -w capture.mitm`
+
+Stop mitmdump with Ctrl-C, not `kill -9`. A connection is only written to the file when it closes, and Ctrl-C writes out any connections that are still open.
+
+### Reading a capture with mitmdump
+To list the connections in a saved capture, use:
+
+  * `mitmdump -nr capture.mitm --showhost`
+
+`-r` reads the file and `-n` stops mitmdump from starting a proxy. Add `--flow-detail 2` to also show the HTTP headers, `--flow-detail 3` to also show the message bodies (truncated), or `--flow-detail 4` to show them in full. To select connections, add a [filter expression](https://docs.mitmproxy.org/stable/concepts/filters/), e.g. `mitmdump -nr capture.mitm --showhost --flow-detail 3 "~d apple.com"`. To browse a capture interactively, use `mitmproxy -r capture.mitm`.
+
+Most of the traffic sent by phone system processes is binary protobuf, which mitmdump shows only as raw bytes. To decode it you need the message schemas, see below.
+
+### Decoding iPhone traffic
+[ios-protobuf-decoding](https://github.com/doug-leith/ios-protobuf-decoding) contains `ios_decoder`, which decodes a saved capture offline using schemas recovered from Apple's binaries. It needs Python 3.12 or later and `protoc` 27 or later (`brew install protobuf`):
+
+```shell
+git clone https://github.com/doug-leith/ios-protobuf-decoding.git
+cd ios-protobuf-decoding
+python3 -m venv venv
+./venv/bin/pip install -r requirements.txt
+./venv/bin/python3 -m ios_decoder.report capture.mitm
+```
+
+By default every connection is listed, with bodies that could not be decoded shown as a short placeholder or a preview of the raw bytes. Add `--decoded-only` to show only the connections where something was decoded, `--user-agent geod` to select one process, or `--url <regex>` to select endpoints. Its README lists all the options.
+
+### Decoding Android traffic
+[android-protobuf-decoding](https://github.com/doug-leith/android-protobuf-decoding) has protobuf schemas for Google Play Services traffic (Clearcut logger, Firebase Analytics, checkin, Play Store and others). It also has a mitmproxy addon, `decoding_helpers.py`, that decodes a saved capture:
+
+```shell
+git clone https://github.com/doug-leith/android-protobuf-decoding.git
+cd android-protobuf-decoding
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+mitmdump --flow-detail 0 -s decoding_helpers.py -nr capture.mitm
+```
+
+### Apple push notifications (APNs) on iPhone
+An iPhone keeps a long-lived connection to the Apple Push Notification service at `courier.push.apple.com`, on TCP port 5223 (falling back to 443). The setup above doesn't capture this connection. Capturing it needs three extra steps:
+
+1. **Redirect port 5223 to mitmdump as well.**
+  * On macOS, change the first line of `pf.conf` to `rdr on bridge100 inet proto tcp to any port {80,443,5223} -> 127.0.0.1 port 8080` and reload it with `sudo pfctl -f pf.conf`.
+  * On a Raspberry Pi, use `sudo iptables -t nat -A PREROUTING -i wlan0 -s <phone IP> -p tcp --dport 5223 -j REDIRECT --to-port 8080`.
+2. **Load the APNs addon `apns_mitm.py`** from [ios-apns-decoding](https://github.com/doug-leith/ios-apns-decoding) when capturing:
+  * `mitmdump --mode transparent --showhost --ssl-insecure --rawtcp -w capture.mitm -s apns_mitm.py`
+
+  Without the addon the TLS handshake fails. The addon also does two other things:
+  * It raises mitmproxy's idle timeout to one hour. The default of 600 seconds closes the connection just before the phone's first keep-alive, which comes after 10 minutes.
+  * It appends each decoded message to `apns_decoded.jsonl` as it arrives. The connection stays open for hours and is only written to `capture.mitm` when it closes, so this log is the copy that survives if mitmdump stops abruptly.
+3. **Use the SSL Kill Switch package from this repo.** The unmodified SSL Kill Switch 3 stops the push daemon (`apsd`) from connecting at all, with or without a proxy. The version in this repo is fixed so that `apsd` connects normally.
+
+To decode the APNs messages, run `./venv/bin/python3 apns_mitm.py capture.mitm` in the ios-apns-decoding folder. To decode from the log instead, use `./venv/bin/python3 apns_mitm.py --jsonl apns_decoded.jsonl`. `ios_decoder` (above) also decodes APNs connections, together with the rest of the traffic in a capture.
