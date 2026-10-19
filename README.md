@@ -76,7 +76,7 @@ palera1n uses the checkm8 bootrom exploit, so it works only on A8-A11 devices (e
 4. Open Sileo and install:
   * `openssh-server` (ssh access), `ellekit` (tweak injection) and `PreferenceLoader` (settings pane for tweaks);
   * optional: `rsync`; and Frida, after adding the source [https://build.frida.re](https://build.frida.re), see [https://frida.re/docs/ios/](https://frida.re/docs/ios/).
-5. Install SSL Kill Switch 3, my modified version of [https://github.com/NyaMisty/ssl-kill-switch3](https://github.com/NyaMisty/ssl-kill-switch3), which also hooks Apple system processes.  Source: folder `ssl-kill-switch3-DL` of [https://github.com/doug-leith/poor-privacy-practices-of-the-apple-app-store](https://github.com/doug-leith/poor-privacy-practices-of-the-apple-app-store).  Build the rootless package with [Theos](https://theos.dev/) (`make package ROOTLESS=1`), or use the prebuilt `ssl-kill-switch3-DL.deb` in this repo (version 1.1-6).  Then copy it to the phone and install it:
+5. Install my modified version of SSL Kill Switch 3, which also hooks Apple system processes and still lets the push notification daemon (`apsd`) connect.  Download the prebuilt package [ssl-kill-switch3-DL.deb](https://raw.githubusercontent.com/doug-leith/mitm-capture-setup/main/ssl-kill-switch3-DL.deb) (version 1.1-6), or build it from the source in folder [ssl-kill-switch3-DL](https://github.com/doug-leith/poor-privacy-practices-of-the-apple-app-store/tree/main/ssl-kill-switch3-DL) with [Theos](https://theos.dev/) (`make package ROOTLESS=1`).  Then copy it to the phone and install it:
 
   * `scp ssl-kill-switch3-DL.deb mobile@<phone IP>:/var/jb/var/mobile/`
   * `ssh mobile@<phone IP>`
@@ -152,7 +152,7 @@ mitmdump --flow-detail 0 -s decoding_helpers.py -nr capture.mitm
 ```
 
 ### Apple push notifications (APNs) on iPhone
-An iPhone keeps a long-lived connection to the Apple Push Notification service at `courier.push.apple.com`, on TCP port 5223 (falling back to 443). The setup above doesn't capture this connection. Capturing it needs three extra steps:
+An iPhone keeps a long-lived connection to the Apple Push Notification service at `courier.push.apple.com`, on TCP port 5223 (falling back to 443). The setup above doesn't capture this connection. Capturing it needs two extra steps:
 
 1. **Redirect port 5223 to mitmdump as well.**
   * On macOS, change the first line of `pf.conf` to `rdr on bridge100 inet proto tcp to any port {80,443,5223} -> 127.0.0.1 port 8080` and reload it with `sudo pfctl -f pf.conf`.
@@ -163,6 +163,5 @@ An iPhone keeps a long-lived connection to the Apple Push Notification service a
   Without the addon the TLS handshake fails. The addon also does two other things:
   * It raises mitmproxy's idle timeout to one hour. The default of 600 seconds closes the connection just before the phone's first keep-alive, which comes after 10 minutes.
   * It appends each decoded message to `apns_decoded.jsonl` as it arrives. The connection stays open for hours and is only written to `capture.mitm` when it closes, so this log is the copy that survives if mitmdump stops abruptly.
-3. **Use the SSL Kill Switch package from this repo.** The unmodified SSL Kill Switch 3 stops the push daemon (`apsd`) from connecting at all, with or without a proxy. The version in this repo is fixed so that `apsd` connects normally.
 
 To decode the APNs messages, run `./venv/bin/python3 apns_mitm.py capture.mitm` in the ios-apns-decoding folder. To decode from the log instead, use `./venv/bin/python3 apns_mitm.py --jsonl apns_decoded.jsonl`. `ios_decoder` (above) also decodes APNs connections, together with the rest of the traffic in a capture.
